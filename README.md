@@ -1,4 +1,0 @@
-MemoryLcd
-=========
-
-Sharp Memory Lcd
