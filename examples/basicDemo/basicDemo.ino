@@ -1,3 +1,30 @@
+/*****************************************************************************
+ *
+ *  Project Name:       Sharp Memory Lcd Library
+ *  File Name:          basicDemo.ino
+ *  Author:             Adam Fabio
+ *  Creation Date:      03/12/2012
+ *
+ *  Description:   		This file provides a basic demo of the 
+ * 						funcitonality of the Sharp Memory Lcd Library. 
+ *
+ ******************************************************************************/
+/* Hardware setup:  
+This demo uses the LCD in harware vcom mode.  
+Arduino Pin 3 is conncted to  ExtCom (LCD breakout Pin 5)
+ExtMode (LCD Pin 7) is connected to 5V.
+Sharp Memory Lcd Breakout  <-> Arduino Uno
+Name   SLCD PIN    ARDU PIN
+VCC 	   1		  5V
+SCLK	   2		  12
+SDATA      3		  11
+SCS	       4  		  10
+EXTCOM     5		   3
+ENABLE     6		   4
+ExtMode	   7		  5V
+GND        8          GND
+*/
+
 //make sure you include SPI in any Sharp Memory LCD software
 #include <SPI.h>
 #include <MemoryLCD.h>
