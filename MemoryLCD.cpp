@@ -50,9 +50,11 @@ unsigned char   revByte[256] = {0x0,0x80,0x40,0xc0,0x20,0xa0,0x60,0xe0,0x10,0x90
 
 
 
-//Add a basic font (orbittron for now)
-//Func to add a font to the font list
-//addFont(char *name,fwidth,fheight,descriptor pointer,bitmap pointer)
+/*
+*Add a basic font (orbittron for now)
+*Func to add a font to the font list
+*addFont(char *name,fwidth,fheight,descriptor pointer,bitmap pointer)
+*/
 unsigned char MemoryLCD::addFont(char *name,FONT_CHAR_INFO *fontInfo,unsigned char *fontBmap)
 {
 	unsigned char retVal = 0;
@@ -100,7 +102,6 @@ MemoryLCD::MemoryLCD(unsigned char inMode)
 	this->curFont = NULL;
 
 	lcdtemp=addFont("orbit",orbitron10ptDescriptors,orbitron10ptBitmaps);
-	this->bgColor = CLOUD; //default background color to cloudy
 	this->curFont = NULL;
 	lcdtemp = setFont("orbit");
 	memset(lcdShadow,0,sizeof(lcdShadow)); 
@@ -142,12 +143,12 @@ void MemoryLCD::handleVbit(char *cmd)
 			if(cur_vBit == 0)
 			{
 			  cur_vBit = 1;
-			  *cmd = *cmd | vHighBit;
+			  *cmd = *cmd | V_HIGH_BIT;
 			}
 			else
 			{
 			  cur_vBit = 0;
-			  *cmd = *cmd & vBitMask;
+			  *cmd = *cmd & V_BIT_MASK;
 			}
 		}
 	}
@@ -205,21 +206,15 @@ void MemoryLCD::RomPutFontchar(int i, int j,  unsigned char asciiChar)
 			thisFontByte = pgm_read_byte_near(fontPtr+iIndex*jByteCount);
 			thisFontByte = thisFontByte >> offset;  //move the first byte over
 			thisMaskByte = (unsigned char)0xFF >> offset;   		//build a mask;
-			if(this->bgColor==CLOUD) //cloudy = 1
-			{
-				thisMaskByte = thisMaskByte;
-				lcdShadow[i+iIndex][jByte] |= revByte[thisMaskByte];
-				//Font's FG color is 1, and BG color is 1.  Must invert font. 
-				thisFontByte = ~thisFontByte;
-				//shifted in 0's become 1's (the background color.
-				//Or in the inverted font (reverse for bit order).  
-				//set the bits in this byte
-				lcdShadow[i+iIndex][jByte] &= revByte[thisFontByte];  
-			}
+			lcdShadow[i+iIndex][jByte] |= revByte[thisMaskByte];
+			//swap colors to match sharp's color scheme
+			thisFontByte = ~thisFontByte;
+			//Or in the inverted font (reverse for bit order).  
+			//set the bits in this byte
+			lcdShadow[i+iIndex][jByte] &= revByte[thisFontByte];  
 			for(jByteIndex=1;jByteIndex < jByteCount;jByteIndex++)
 			{				
 				//first deal with pixels left over from the last character
-				
 				//set up the bits in the first font byte
 				lastFontByte = pgm_read_byte_near(fontPtr+(iIndex*jByteCount)+(jByteIndex-1));
 				lastFontByte = lastFontByte << (8 - offset);  
@@ -227,11 +222,9 @@ void MemoryLCD::RomPutFontchar(int i, int j,  unsigned char asciiChar)
 				//set up the bits in the second font byte (shift and mask)
 				thisFontByte = pgm_read_byte_near(fontPtr+(iIndex*jByteCount)+jByteIndex);
 				thisFontByte = thisFontByte >> offset; 
-				//thisFontByte = thisFontByte & (~thisMaskByte);
 
 				//now put it all together
 				thisFontByte = thisFontByte | lastFontByte;
-				//Invert ( TODO if needed)
 				thisFontByte = ~thisFontByte;
 				//write it to the shadow (destroy any extra bits to the right)
 				lcdShadow[i+iIndex][jByte+jByteIndex] = revByte[thisFontByte];
@@ -242,7 +235,6 @@ void MemoryLCD::RomPutFontchar(int i, int j,  unsigned char asciiChar)
 			thisFontByte = pgm_read_byte_near(fontPtr+(iIndex*jByteCount)+jByteCount-1);
 			thisFontByte = thisFontByte << (8 - offset);  
 			
-			//(TODO) check for invert needed
 			thisFontByte = ~thisFontByte;
 			lcdShadow[i+iIndex][jByte+jByteCount] = revByte[thisFontByte]; //use the mask
 		}

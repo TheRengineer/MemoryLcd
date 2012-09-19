@@ -14,19 +14,20 @@
 #ifndef MEMORYLCD_H
 #define MEMORYLCD_H
 #include "Arduino.h"
-//#include <SPI.h>
+
 #define SLAVE_SELECT_PIN 10
 #define DISP_ENABLE 4
 #define LCD_DELAY 3
-#define vHighBit  0x02;//0100
-#define vLowBit  0x00;
-#define vBitMask 0xFD; //1011 1111
+
 
 #define LCD_ROWS  96
 #define LCD_COLS  96
 #define LCD_COL_BYTES LCD_COLS/8
-#define CLOUD 0xFF
-#define SHINE 0x00
+
+
+#define V_HIGH_BIT  0x02;//0100
+#define V_BIT_MASK 0xFD; //1011 1111
+
 /*Commands*/
 #define CMD_CLEAR 0x04
 #define CMD_WRITE_ROW 0x01
@@ -76,12 +77,12 @@ class MemoryLCD
 		unsigned char addFont(char *name, FONT_CHAR_INFO *fontInfo,unsigned char *fontBmap);
 	    unsigned char checkFont(char *lkupFont);
 		unsigned char setFont(char *lkupFont);
-			unsigned char lcdShadow[LCD_ROWS][LCD_COL_BYTES];
-			FONT_DATA fontList2[MAX_NUM_FONTS];
-			unsigned char curFontCount;
+		unsigned char lcdShadow[LCD_ROWS][LCD_COL_BYTES];
+		FONT_DATA fontList2[MAX_NUM_FONTS];
+		unsigned char curFontCount;
 	private:
-		//unsigned char lcdShadow[LCD_ROWS*LCD_COLS];
-		unsigned char bgColor;
+
+
 		char extMode;
 		char cur_vBit;
 		void handleVbit(char *cmd);

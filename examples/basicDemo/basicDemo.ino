@@ -1,7 +1,11 @@
+//make sure you include SPI in any Sharp Memory LCD software
 #include <SPI.h>
 #include <MemoryLCD.h>
+
+//Create the LCD using a hardware timer 
 MemoryLCD memLcd(EXT_HARDWARE);
 
+//Bitmap data for the cat - used below
 PROGMEM prog_uchar catBmp[128] = 
 {
     0x00, 0x00, 0x00, 0x00,
@@ -40,24 +44,33 @@ PROGMEM prog_uchar catBmp[128] =
 
 void setup()
 {
+  //start the LCD libarary
   memLcd.begin();
 }
 
 void loop()
 {
-    memLcd.clear();
+
+    //Display an intro to the Library
+    //Place "The" at pixel 0,30 (top center)
     memLcd.putString(0,30, "The");
     memLcd.putString(15,10, "Rengineer");
     memLcd.putString(30,25,"Sharp");
     memLcd.putString(45,18,"Memory");
     memLcd.putString(60,2,"LCD Library");
+    //Push the text to the LCD
     memLcd.refresh();
+    //delay the text can be seen
     delay(4000); 
     
+    //clear the LCD
     memLcd.clear();
     memLcd.putString(0,5, "Plot Circles");
+    //Plot a circle of radius 20 at pixel 42,42.
     memLcd.Circle(42,42,20,0);
+    //Plot a circle of radius 20 at pixel 60,20
     memLcd.Circle(60,20,20,0);
+    //Push circles and text to the LCD
     memLcd.refresh();
     delay(4000); 
     
@@ -71,7 +84,12 @@ void loop()
     memLcd.clear();
     memLcd.putString(0,27, "Draw");
     memLcd.putString(15,20, "Bitmaps");
+    //Draw catBmp - (defined above)
+    //Place it at pixel 40,32. 
+    //catBmp is 32x32 pixels.  
     memLcd.printBitmap(40,32,catBmp,32,32);
     memLcd.refresh();
     delay(4000);
+    //clear the LCD in prep for the next loop
+    memLcd.clear();
 }
