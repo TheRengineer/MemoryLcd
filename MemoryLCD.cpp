@@ -196,7 +196,13 @@ void MemoryLCD::RomPutFontchar(int i, int j,  unsigned char asciiChar)
 			{
 				thisFontByte = pgm_read_byte_near(fontPtr+(iIndex*jByteCount)+jByteIndex);
 				thisFontByte = ~thisFontByte;
-				lcdShadow[i+iIndex][jByte+jByteIndex] = revByte[thisFontByte];
+				if((i+iIndex>=0) && (i+iIndex<LCD_ROWS))
+				{
+					if((jByte+jByteIndex>=0) && (jByte+jByteIndex < LCD_COL_BYTES))
+					{								
+						lcdShadow[i+iIndex][jByte+jByteIndex] = revByte[thisFontByte];
+					}
+				}
 			}
 			
 		}
@@ -206,12 +212,18 @@ void MemoryLCD::RomPutFontchar(int i, int j,  unsigned char asciiChar)
 			thisFontByte = pgm_read_byte_near(fontPtr+iIndex*jByteCount);
 			thisFontByte = thisFontByte >> offset;  //move the first byte over
 			thisMaskByte = (unsigned char)0xFF >> offset;   		//build a mask;
-			lcdShadow[i+iIndex][jByte] |= revByte[thisMaskByte];
-			//swap colors to match sharp's color scheme
-			thisFontByte = ~thisFontByte;
-			//Or in the inverted font (reverse for bit order).  
-			//set the bits in this byte
-			lcdShadow[i+iIndex][jByte] &= revByte[thisFontByte];  
+			if((i+iIndex>=0) && (i+iIndex<LCD_ROWS))
+			{
+				if((jByte>=0) && (jByte < LCD_COL_BYTES))
+				{				
+					lcdShadow[i+iIndex][jByte] |= revByte[thisMaskByte];
+					//swap colors to match sharp's color scheme
+					thisFontByte = ~thisFontByte;
+					//Or in the inverted font (reverse for bit order).  
+					//set the bits in this byte
+					lcdShadow[i+iIndex][jByte] &= revByte[thisFontByte];  
+				}
+			}
 			for(jByteIndex=1;jByteIndex < jByteCount;jByteIndex++)
 			{				
 				//first deal with pixels left over from the last character
@@ -227,7 +239,13 @@ void MemoryLCD::RomPutFontchar(int i, int j,  unsigned char asciiChar)
 				thisFontByte = thisFontByte | lastFontByte;
 				thisFontByte = ~thisFontByte;
 				//write it to the shadow (destroy any extra bits to the right)
-				lcdShadow[i+iIndex][jByte+jByteIndex] = revByte[thisFontByte];
+				if((i+iIndex>=0) && (i+iIndex<LCD_ROWS))
+				{
+					if((jByte+jByteIndex>=0) && (jByte+jByteIndex < LCD_COL_BYTES))
+					{							
+						lcdShadow[i+iIndex][jByte+jByteIndex] = revByte[thisFontByte];
+					}
+				}
 				//first deal with pixels left over from the last character
 			}
 			//Last Byte is special - do this outside the loop
@@ -236,7 +254,13 @@ void MemoryLCD::RomPutFontchar(int i, int j,  unsigned char asciiChar)
 			thisFontByte = thisFontByte << (8 - offset);  
 			
 			thisFontByte = ~thisFontByte;
-			lcdShadow[i+iIndex][jByte+jByteCount] = revByte[thisFontByte]; //use the mask
+			if((i+iIndex>=0) && (i+iIndex<LCD_ROWS))
+			{
+				if((jByte+jByteCount>=0) && (jByte+jByteCount < LCD_COL_BYTES))
+				{							
+					lcdShadow[i+iIndex][jByte+jByteCount] = revByte[thisFontByte]; //use the mask
+				}
+			}
 		}
 	}
 }
@@ -585,7 +609,13 @@ void MemoryLCD::printBitmap(int i, int j, prog_uchar* imgBuff, int size_i, int s
 			{
 				thisBmpByte = pgm_read_byte_near(imgBuff+(iIndex*jByteCount)+jByteIndex);
 				thisBmpByte = ~thisBmpByte;
-				lcdShadow[i+iIndex][jByte+jByteIndex] = revByte[thisBmpByte];
+				if((i+iIndex>=0) && (i+iIndex<LCD_ROWS))
+				{
+					if((jByte+jByteIndex>=0) && (jByte+jByteIndex < LCD_COL_BYTES))
+					{
+						lcdShadow[i+iIndex][jByte+jByteIndex] = revByte[thisBmpByte];
+					}
+				}
 			}
 		}
 		else
@@ -594,10 +624,17 @@ void MemoryLCD::printBitmap(int i, int j, prog_uchar* imgBuff, int size_i, int s
 			thisBmpByte = pgm_read_byte_near(imgBuff+iIndex*jByteCount);
 			thisBmpByte = thisBmpByte >> offset;  //move the first byte over
 			thisMaskByte = (unsigned char)0xFF >> offset;   		//build a mask;
-			lcdShadow[i+iIndex][jByte] |= revByte[thisMaskByte];
-			thisBmpByte = ~thisBmpByte;
-			//shifted in 0's become 1's (the background color.
-			lcdShadow[i+iIndex][jByte] &= revByte[thisBmpByte];  //set the bits in this byte
+			if((i+iIndex>=0) && (i+iIndex<LCD_ROWS))
+			{
+				if((jByte>=0) && (jByte < LCD_COL_BYTES))
+				{			
+					lcdShadow[i+iIndex][jByte] |= revByte[thisMaskByte];
+					thisBmpByte = ~thisBmpByte;
+					//shifted in 0's become 1's (the background color.
+					lcdShadow[i+iIndex][jByte] &= revByte[thisBmpByte];  //set the bits in this byte
+				}
+			}
+
 			for(jByteIndex=1;jByteIndex < jByteCount;jByteIndex++)
 			{				
 				//first deal with pixels left over from the last character
@@ -614,7 +651,13 @@ void MemoryLCD::printBitmap(int i, int j, prog_uchar* imgBuff, int size_i, int s
 				//Invert the colors (for correct display on sharp memory lcd)
 				thisBmpByte = ~thisBmpByte; 
 				//write it to the shadow (destroy any extra bits to the right)
-				lcdShadow[i+iIndex][jByte+jByteIndex] = revByte[thisBmpByte];
+				if((i+iIndex>=0) && (i+iIndex<LCD_ROWS))
+				{
+					if((jByte+jByteIndex>=0) && (jByte+jByteIndex < LCD_COL_BYTES))
+					{				
+						lcdShadow[i+iIndex][jByte+jByteIndex] = revByte[thisBmpByte];
+					}
+				}
 				//first deal with pixels left over from the last character
 			}
 			//Last Byte is special - do this outside the loop
@@ -623,7 +666,13 @@ void MemoryLCD::printBitmap(int i, int j, prog_uchar* imgBuff, int size_i, int s
 			thisBmpByte = ~thisBmpByte;
 			thisBmpByte = thisBmpByte << (8 - offset);  
 			thisBmpByte |= thisMaskByte;
-			lcdShadow[i+iIndex][jByte+jByteCount] = revByte[thisBmpByte]; //use the mask
+			if((i+iIndex>=0) && (i+iIndex<LCD_ROWS))
+			{
+				if((jByte+jByteCount>=0) && (jByte+jByteCount < LCD_COL_BYTES))
+				{			
+					lcdShadow[i+iIndex][jByte+jByteCount] = revByte[thisBmpByte]; //use the mask
+				}
+			}
 		}
 	}
 }
