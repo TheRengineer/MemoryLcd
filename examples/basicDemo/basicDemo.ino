@@ -16,7 +16,7 @@ ExtMode (LCD Pin 7) is connected to 5V.
 Sharp Memory Lcd Breakout  <-> Arduino Uno
 Name   SLCD PIN    ARDU PIN
 VCC 	   1		  5V
-SCLK	   2		  12
+SCLK	   2		  13
 SDATA      3		  11
 SCS	       4  		  10
 EXTCOM     5		   3
