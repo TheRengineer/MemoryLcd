@@ -11,7 +11,7 @@
 
 
 #include <avr/pgmspace.h>
-#include "MemoryLcd.h"
+#include "MemoryLCD.h"
 
 
 
