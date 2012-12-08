@@ -10,7 +10,7 @@
  *
  ******************************************************************************/
 #include "Arduino.h"
-#include "spi.h"
+#include "SPI.h"
 
 
 #include "MemoryLCD.h"
